@@ -5,6 +5,8 @@ Povio Labs NodeJS Test Assignment 1.0
 ## Installation
 
 ```bash
+$ brew install postgresql
+$ createdb -h localhost -p 5432 -U postgres povio-node-development
 $ npm install
 ```
 
