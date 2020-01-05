@@ -1,10 +1,10 @@
-import { DynamicModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as ormconfig from './ormconfig';
+import { ConfigService } from '@nestjs/config';
+import { ormconfigFactory } from './ormonfig.factory';
 
-export function DatabaseOrmModule(): DynamicModule {
-  // we could load the configuration from dotEnv here,
-  // but typeORM cli would not be able to find the configuration file.
-
-  return TypeOrmModule.forRoot(ormconfig);
-}
+export const databaseOrmModule = TypeOrmModule.forRootAsync({
+    useFactory: (configService: ConfigService) => {
+      return ormconfigFactory(configService);
+    },
+    inject: [ConfigService],
+  });
