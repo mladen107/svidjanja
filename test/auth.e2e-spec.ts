@@ -35,7 +35,8 @@ describe('AuthController (e2e)', () => {
   });
 
   beforeEach(
-    async () => await connection.query('TRUNCATE "user" RESTART IDENTITY'),
+    async () =>
+      await connection.query('TRUNCATE "user" RESTART IDENTITY CASCADE'),
   );
   afterAll(async () => await app.close());
 
