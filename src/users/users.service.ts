@@ -8,8 +8,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {
-  }
+  ) {}
 
   async createUser(username: string, password: string) {
     const user = this.userRepository.create({ username, password });
@@ -21,5 +20,9 @@ export class UsersService {
       where: { username },
       select: ['id', 'username', 'password'],
     });
+  }
+
+  async findOneByName(username) {
+    return this.userRepository.findOne({ username });
   }
 }
