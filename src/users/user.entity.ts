@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { UserLike } from './user-like.entity';
 
 @Entity()
 export class User {
@@ -13,4 +21,16 @@ export class User {
   @Exclude()
   @Column({ length: 255, select: false })
   password: string;
+
+  @OneToMany(
+    type => UserLike,
+    userLike => userLike.giver,
+  )
+  givenLikes: UserLike[];
+
+  @OneToMany(
+    type => UserLike,
+    userLike => userLike.receiver,
+  )
+  receivedLikes: UserLike[];
 }
