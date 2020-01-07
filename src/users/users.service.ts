@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { User } from './user.entity';
@@ -11,7 +11,8 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserLike)
     private readonly userLikeRepository: Repository<UserLike>,
-  ) {}
+  ) {
+  }
 
   async create(username: string, password: string) {
     const user = this.userRepository.create({ username, password });
@@ -41,6 +42,9 @@ export class UsersService {
       .where({ id })
       .groupBy('user.id')
       .getRawOne();
+    if (!userLikesRaw) {
+      throw new UnprocessableEntityException('User not found.');
+    }
     return this.mapUserLikesCount(userLikesRaw);
   }
 

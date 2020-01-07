@@ -1,17 +1,11 @@
 import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import {
-  ClassSerializerInterceptor,
   INestApplication,
-  ValidationPipe,
 } from '@nestjs/common';
 import { Connection } from 'typeorm';
-import { getConnectionToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../src/auth/auth.service';
-import { Reflector } from '@nestjs/core';
-import { useContainer } from 'class-validator';
+import { initApp } from './helpers/init-app';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -19,18 +13,9 @@ describe('AuthController (e2e)', () => {
   let authService: AuthService;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
-    const reflector = app.get(Reflector);
-    app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
-    useContainer(app.select(AppModule), { fallbackOnErrors: true });
-    await app.init();
-
-    connection = moduleFixture.get(getConnectionToken());
+    const appContainer = await initApp();
+    app = appContainer.app;
+    connection = appContainer.connection;
     authService = app.get<AuthService>(AuthService);
   });
 
