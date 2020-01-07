@@ -1,6 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
-import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { getConnectionToken } from '@nestjs/typeorm';

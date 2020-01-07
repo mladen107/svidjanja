@@ -1,7 +1,5 @@
 import * as request from 'supertest';
-import {
-  INestApplication,
-} from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { initApp } from './helpers/init-app';
 import { UsersService } from '../src/users/users.service';
@@ -37,15 +35,14 @@ describe('User controller (e2e)', () => {
     authService = app.get(AuthService);
   });
 
-  beforeEach(
-    async () => {
-      await connection.query('TRUNCATE "user" RESTART IDENTITY CASCADE');
-      userAccessTokens = [];
-      for (const user of users) {
-        const { access_token } = await authService.signUp(user);
-        userAccessTokens.push(access_token);
-      }
-    });
+  beforeEach(async () => {
+    await connection.query('TRUNCATE "user" RESTART IDENTITY CASCADE');
+    userAccessTokens = [];
+    for (const user of users) {
+      const { access_token } = await authService.signUp(user);
+      userAccessTokens.push(access_token);
+    }
+  });
 
   afterAll(async () => await app.close());
 
@@ -157,7 +154,7 @@ describe('User controller (e2e)', () => {
           { username: users[1].username, noOfLikes: 2 },
           { username: users[2].username, noOfLikes: 1 },
           { username: users[0].username, noOfLikes: 0 },
-          ]);
+        ]);
     });
   });
 });
