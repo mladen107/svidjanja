@@ -6,9 +6,14 @@ import { databaseOrmModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 
+const IS_TEST_ENVIRONMENT = process.env.NODE_ENV === 'test';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: IS_TEST_ENVIRONMENT ? 'test.env' : '.env',
+    }),
     databaseOrmModule,
     UsersModule,
     AuthModule,
@@ -16,5 +21,4 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

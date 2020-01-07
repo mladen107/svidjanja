@@ -1,8 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import { ConnectionOptions } from 'typeorm';
-import { DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER } from '../config/config.constants';
+import {
+  DB_HOST,
+  DB_NAME,
+  DB_PASS,
+  DB_PORT,
+  DB_USER,
+} from '../config/config.constants';
 
-export function ormconfigFactory(configService: ConfigService): ConnectionOptions {
+export function ormconfigFactory(
+  configService: ConfigService,
+): ConnectionOptions {
   return {
     type: 'postgres',
     host: configService.get(DB_HOST),

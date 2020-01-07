@@ -6,7 +6,9 @@ import { ConnectionOptions } from 'typeorm';
 // This file is used by typeORM CLI to create ConnectionOptions
 
 async function createConfig() {
-  const app = await NestFactory.createApplicationContext(ConfigModule.forRoot());
+  const app = await NestFactory.createApplicationContext(
+    ConfigModule.forRoot(),
+  );
   const configService = app.get(ConfigService);
 
   return ormconfigFactory(configService);
