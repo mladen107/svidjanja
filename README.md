@@ -12,6 +12,8 @@ $ npm install
 
 ## Running the app
 
+Create `.env` file based on `.ev.sample`.
+
 ```bash
 # development
 $ npm run start
@@ -25,11 +27,14 @@ $ npm run start:prod
 
 ## Test
 
+Create `.env.test` file based on `.ev.sample`.
+
 ```bash
 # unit tests
 $ npm run test
 
 # e2e tests
+$ createdb -h localhost -p 5432 -U postgres povio-node-test
 $ npm run test:e2e
 
 # test coverage

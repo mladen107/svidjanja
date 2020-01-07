@@ -12,7 +12,7 @@ const IS_TEST_ENVIRONMENT = process.env.NODE_ENV === 'test';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: IS_TEST_ENVIRONMENT ? 'test.env' : '.env',
+      envFilePath: IS_TEST_ENVIRONMENT ? '.env.test' : '.env',
     }),
     databaseOrmModule,
     UsersModule,
