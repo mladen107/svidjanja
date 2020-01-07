@@ -40,7 +40,7 @@ describe('AuthController (e2e)', () => {
   afterAll(async () => await app.close());
 
   describe('/signup', () => {
-    it('registers user and returns access token', async () => {
+    it('registers user and returns 201 with access token', async () => {
       const jwtService = app.get<JwtService>(JwtService);
       const mockInstance = jest
         .spyOn(jwtService, 'sign')
@@ -76,7 +76,7 @@ describe('AuthController (e2e)', () => {
         .expect(400);
     });
 
-    it('returns 400 if the name is already used', async () => {
+    it('returns 400 if the username is already used', async () => {
       await authService.signUp({ username: 'Test user', password: 'Pass@123' });
 
       await request(app.getHttpServer())
@@ -97,7 +97,7 @@ describe('AuthController (e2e)', () => {
     await request(app.getHttpServer())
       .post('/login')
       .send({ username: 'Test user', password: 'Pass@123' })
-      .expect(201)
+      .expect(200)
       .expect({
         access_token: 'token',
       });
@@ -119,5 +119,81 @@ describe('AuthController (e2e)', () => {
         id: 1,
         username: 'Test user',
       });
+  });
+
+  describe('/me/update-password', () => {
+    it('returns 200 on valid request', async () => {
+      const oldPassword = 'Pass@123';
+      const newPassword = 'Pass@124';
+
+      const { access_token } = await authService.signUp({
+        username: 'Test user',
+        password: oldPassword,
+      });
+
+      await request(app.getHttpServer())
+        .post('/me/update-password')
+        .set({ Authorization: `Bearer ${access_token}` })
+        .send({ oldPassword, newPassword })
+        .expect(200);
+
+      await request(app.getHttpServer())
+        .post('/login')
+        .send({ username: 'Test user', password: newPassword })
+        .expect(200);
+
+      await request(app.getHttpServer())
+        .post('/login')
+        .send({ username: 'Test user', password: oldPassword })
+        .expect(401);
+    });
+
+    it('returns 400 for the same old and new password', async () => {
+      const oldPassword = 'Pass@123';
+      const newPassword = oldPassword;
+
+      const { access_token } = await authService.signUp({
+        username: 'Test user',
+        password: oldPassword,
+      });
+
+      await request(app.getHttpServer())
+        .post('/me/update-password')
+        .set({ Authorization: `Bearer ${access_token}` })
+        .send({ oldPassword, newPassword })
+        .expect(400);
+    });
+
+    it('returns 401 for invalid old password', async () => {
+      const oldPassword = 'Pass@123';
+      const newPassword = 'Pass@124';
+
+      const { access_token } = await authService.signUp({
+        username: 'Test user',
+        password: 'Pass@122',
+      });
+
+      await request(app.getHttpServer())
+        .post('/me/update-password')
+        .set({ Authorization: `Bearer ${access_token}` })
+        .send({ oldPassword, newPassword })
+        .expect(401);
+    });
+
+    it('returns 400 for invalid new password format', async () => {
+      const oldPassword = 'Pass@123';
+      const newPassword = '1111';
+
+      const { access_token } = await authService.signUp({
+        username: 'Test user',
+        password: oldPassword,
+      });
+
+      await request(app.getHttpServer())
+        .post('/me/update-password')
+        .set({ Authorization: `Bearer ${access_token}` })
+        .send({ oldPassword, newPassword })
+        .expect(400);
+    });
   });
 });

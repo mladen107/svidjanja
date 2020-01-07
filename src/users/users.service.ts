@@ -25,4 +25,8 @@ export class UsersService {
   async findOneByName(username) {
     return this.userRepository.findOne({ username });
   }
+
+  async updatePassword(userId, password) {
+    return this.userRepository.update({ id: userId }, { password });
+  }
 }
