@@ -68,16 +68,6 @@ describe('User controller (e2e)', () => {
         .expect({ username, noOfLikes });
     });
 
-    it('returns correct data for user without likes', async () => {
-      const username = users[0].username;
-      const noOfLikes = 0;
-
-      await request(app.getHttpServer())
-        .get(`/user/${1}`)
-        .expect(200)
-        .expect({ username, noOfLikes });
-    });
-
     it('returns 422 when user id doesn\'t exists', async () => {
       await request(app.getHttpServer())
         .get(`/user/${4}`)
@@ -145,8 +135,21 @@ describe('User controller (e2e)', () => {
   describe('most-liked', () => {
     it('returns list of users ordered by number of likes', async () => {
       await userService.like(1, 2);
+      await userService.like(3, 2);
+      await userService.like(1, 3);
+      await request(app.getHttpServer())
+        .get(`/most-liked`)
+        .expect(200)
+        .expect([
+          { username: users[1].username, noOfLikes: 2 },
+          { username: users[2].username, noOfLikes: 1 },
+          { username: users[0].username, noOfLikes: 0 },
+        ]);
+    });
+    it('doesn\'t depend on order of likes', async () => {
       await userService.like(1, 3);
       await userService.like(3, 2);
+      await userService.like(1, 2);
       await request(app.getHttpServer())
         .get(`/most-liked`)
         .expect(200)
