@@ -87,9 +87,10 @@ export class UsersService {
   async getMostLiked() {
     const userLikesRaw = await this.userRepository
       .createQueryBuilder('user')
-      .select(['user.username as username', 'COUNT(user_like.id)'])
+      .select(['user.username as username', 'COUNT(user_like.id) as count'])
       .leftJoin('user.receivedLikes', 'user_like')
       .groupBy('user.id')
+      .orderBy('count', 'DESC')
       .execute();
 
     return userLikesRaw.map(item => this.mapUserLikesCount(item));
